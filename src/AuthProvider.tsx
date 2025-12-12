@@ -6,14 +6,15 @@ import React, {
   ReactNode,
 } from "react";
 
+// Config interface
 export interface AuthKitConfig {
-  loginApi: (email: string, password: string) => Promise<{
-    user: any;
-    token: string;
-  }>;
+  loginApi?: (email: string, password: string) => Promise<{ user: any; token: string }>;
   logoutApi?: () => Promise<void>;
+  loginRoute?: string; // optional, default "/auth/login"
+  logoutRoute?: string; // optional, default "/auth/logout"
 }
 
+// Context type
 interface AuthContextType {
   user: any;
   loading: boolean;
@@ -21,8 +22,10 @@ interface AuthContextType {
   logout: () => Promise<void>;
 }
 
+// Create context
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// AuthProvider component
 export const AuthProvider = ({
   children,
   config,
@@ -33,10 +36,10 @@ export const AuthProvider = ({
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  // Load user from localStorage on mount
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem("authkit-user");
-
       if (storedUser) {
         setUser(JSON.parse(storedUser));
       }
@@ -48,21 +51,43 @@ export const AuthProvider = ({
     }
   }, []);
 
+  // Login function
   const login = async (email: string, password: string) => {
-    const res = await config.loginApi(email, password);
+    let data: { user: any; token: string };
 
-    setUser(res.user);
-    localStorage.setItem("authkit-user", JSON.stringify(res.user));
+    if (config.loginApi) {
+      // If user provided custom login function
+      data = await config.loginApi(email, password);
+    } else {
+      // Default internal fetch login
+      const route = config.loginRoute || "/auth/login";
+      const res = await fetch(route, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    document.cookie = `accessToken=${res.token}; path=/; SameSite=Lax`;
+      if (!res.ok) throw new Error("Login failed");
+      data = await res.json();
+    }
 
-    return res.user;
+    // Save user & token
+    setUser(data.user);
+    localStorage.setItem("authkit-user", JSON.stringify(data.user));
+    document.cookie = `accessToken=${data.token}; path=/; SameSite=Lax`;
+
+    return data.user;
   };
 
+  // Logout function
   const logout = async () => {
     if (config.logoutApi) {
       try {
         await config.logoutApi();
+      } catch {}
+    } else if (config.logoutRoute) {
+      try {
+        await fetch(config.logoutRoute, { method: "POST" });
       } catch {}
     }
 
@@ -79,6 +104,7 @@ export const AuthProvider = ({
   );
 };
 
+// useAuth hook
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used inside AuthProvider");

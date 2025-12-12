@@ -1,5 +1,5 @@
 {
-  "name": "auth-kit",
+  "name": "react-express-auth-kit",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {

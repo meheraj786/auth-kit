@@ -24,6 +24,7 @@ You plug in your own API functions.
 
 ```bash
 npm install auth-kit
+````
 
 or
 
@@ -37,7 +38,7 @@ yarn add auth-kit
 
 `auth-kit` requires your own login and logout API functions.
 
-### **Example**
+### Example
 
 ```tsx
 // App.jsx / App.tsx
@@ -133,5 +134,4 @@ Please open an issue first to discuss any changes.
 
 MIT License © 2025
 Developed by Meheraj Hosen
-
 

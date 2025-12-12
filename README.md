@@ -1,10 +1,10 @@
-# auth-kit
+# react-express-auth-kit
 
 A lightweight and flexible authentication state manager for React applications.  
 Supports both **JavaScript** and **TypeScript** projects.
 
-`auth-kit` helps you manage user state, login, logout, and token persistence without forcing any specific backend.  
-You plug in your own API functions.
+`react-express-auth-kit` helps you manage user state, login, logout, and token persistence without forcing any specific backend.  
+Login is handled internally by default routes, but you can customize routes if needed.
 
 ---
 
@@ -15,6 +15,8 @@ You plug in your own API functions.
 - Works with any backend
 - Built with TypeScript but fully compatible with JavaScript
 - Provides `useAuth()` hook
+- Internal login/logout with default routes (`/auth/login` and `/auth/logout`)
+- Optional `logoutApi` for custom logout
 - Lightweight and fast
 - Supports both **ESM** and **CommonJS**
 
@@ -23,49 +25,30 @@ You plug in your own API functions.
 ## 📦 Installation
 
 ```bash
-npm install auth-kit
+npm install react-express-auth-kit
 ````
 
 or
 
 ```bash
-yarn add auth-kit
+yarn add react-express-auth-kit
 ```
 
 ---
 
 ## 🛠 Usage
 
-`auth-kit` requires your own login and logout API functions.
+`react-express-auth-kit` handles login internally via default routes. You can optionally configure routes or a custom logout function.
 
-### Example
+### Example with default internal login/logout
 
 ```tsx
-// App.jsx / App.tsx
-
-import { AuthProvider } from "auth-kit";
-import api from "./api/axios";
-
-const loginApi = async (email, password) => {
-  const res = await api.post("/auth/login", { email, password });
-  return {
-    user: res.data.data.user,
-    token: res.data.data.token,
-  };
-};
-
-const logoutApi = async () => {
-  await api.post("/auth/logout");
-};
+import { AuthProvider, useAuth } from "react-express-auth-kit";
+import MyApp from "./MyApp";
 
 function App() {
   return (
-    <AuthProvider
-      config={{
-        loginApi,
-        logoutApi,
-      }}
-    >
+    <AuthProvider>
       <MyApp />
     </AuthProvider>
   );
@@ -76,13 +59,45 @@ export default App;
 
 ---
 
-## 🎣 Using `useAuth()`
+## 🎯 Logging in
+
+Use the `login` function from `useAuth()` hook to log in a user with email and password:
 
 ```tsx
-import { useAuth } from "auth-kit";
+import { useAuth } from "react-express-auth-kit";
+
+function LoginForm() {
+  const { login } = useAuth();
+
+  const handleLogin = async () => {
+    try {
+      const user = await login("test@example.com", "password123");
+      console.log("Logged in user:", user);
+    } catch (err) {
+      console.error("Login failed:", err);
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={handleLogin}>Login</button>
+    </div>
+  );
+}
+```
+
+* The `login` function internally calls the route specified by `loginRoute` (default `/auth/login`).
+* On success, `user` is stored in `localStorage` (`authkit-user`) and token in cookies (`accessToken`).
+
+---
+
+## 🎣 Using `useAuth()` for user state & logout
+
+```tsx
+import { useAuth } from "react-express-auth-kit";
 
 function Dashboard() {
-  const { user, loading, login, logout } = useAuth();
+  const { user, loading, logout } = useAuth();
 
   if (loading) return <p>Loading...</p>;
 
@@ -99,14 +114,15 @@ function Dashboard() {
 
 ## ⚙️ Config Options
 
-| Option      | Type                                            | Required | Description                 |
-| ----------- | ----------------------------------------------- | -------- | --------------------------- |
-| `loginApi`  | `(email, password) => Promise<{ user, token }>` | Yes      | Your login request function |
-| `logoutApi` | `() => Promise<void>`                           | No       | Optional logout function    |
+| Option        | Type                  | Required | Description                                             |
+| ------------- | --------------------- | -------- | ------------------------------------------------------- |
+| `loginRoute`  | `string`              | No       | Optional internal login route (default `/auth/login`)   |
+| `logoutRoute` | `string`              | No       | Optional internal logout route (default `/auth/logout`) |
+| `logoutApi`   | `() => Promise<void>` | No       | Optional custom logout function                         |
 
 ---
 
-## 🧩 What auth-kit Stores
+## 🧩 What react-express-auth-kit Stores
 
 * `user` → saved in `localStorage` as `authkit-user`
 * `token` → stored in browser cookies as `accessToken`
@@ -118,7 +134,7 @@ function Dashboard() {
 Full TypeScript definitions included:
 
 ```ts
-import { AuthProvider, useAuth, type AuthKitConfig } from "auth-kit";
+import { AuthProvider, useAuth, type AuthKitConfig } from "react-express-auth-kit";
 ```
 
 ---

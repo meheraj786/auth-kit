@@ -8,10 +8,9 @@ import React, {
 
 // Config interface
 export interface AuthKitConfig {
-  loginApi?: (email: string, password: string) => Promise<{ user: any; token: string }>;
-  logoutApi?: () => Promise<void>;
-  loginRoute?: string; // optional, default "/auth/login"
-  logoutRoute?: string; // optional, default "/auth/logout"
+  loginRoute?: string; // internal login route, default "/auth/login"
+  logoutRoute?: string; // internal logout route, default "/auth/logout"
+  logoutApi?: () => Promise<void>; // optional custom logout
 }
 
 // Context type
@@ -31,7 +30,7 @@ export const AuthProvider = ({
   config,
 }: {
   children: ReactNode;
-  config: AuthKitConfig;
+  config?: AuthKitConfig;
 }) => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -40,36 +39,28 @@ export const AuthProvider = ({
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem("authkit-user");
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
-    } catch (error) {
-      console.error("AuthKit parse error:", error);
+      if (storedUser) setUser(JSON.parse(storedUser));
+    } catch (err) {
+      console.error("AuthKit parse error:", err);
       localStorage.removeItem("authkit-user");
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Login function
+  // Login function (internal fetch)
   const login = async (email: string, password: string) => {
-    let data: { user: any; token: string };
+    const route = config?.loginRoute || "/auth/login";
 
-    if (config.loginApi) {
-      // If user provided custom login function
-      data = await config.loginApi(email, password);
-    } else {
-      // Default internal fetch login
-      const route = config.loginRoute || "/auth/login";
-      const res = await fetch(route, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+    const res = await fetch(route, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-      if (!res.ok) throw new Error("Login failed");
-      data = await res.json();
-    }
+    if (!res.ok) throw new Error("Login failed");
+
+    const data: { user: any; token: string } = await res.json();
 
     // Save user & token
     setUser(data.user);
@@ -81,11 +72,11 @@ export const AuthProvider = ({
 
   // Logout function
   const logout = async () => {
-    if (config.logoutApi) {
+    if (config?.logoutApi) {
       try {
         await config.logoutApi();
       } catch {}
-    } else if (config.logoutRoute) {
+    } else if (config?.logoutRoute) {
       try {
         await fetch(config.logoutRoute, { method: "POST" });
       } catch {}

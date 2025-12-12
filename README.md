@@ -134,5 +134,4 @@ Please open an issue first to discuss any changes.
 MIT License © 2025
 Developed by Meheraj Hosen
 
-```
 

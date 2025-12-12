@@ -1,5 +1,3 @@
-
-````md
 # auth-kit
 
 A lightweight and flexible authentication state manager for React applications.  
@@ -26,7 +24,6 @@ You plug in your own API functions.
 
 ```bash
 npm install auth-kit
-````
 
 or
 

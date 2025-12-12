@@ -1,23 +1,24 @@
-# ⭐ **README.md (Professional + Beginner Friendly)**
 
 ````md
-# auth-kit  
+# auth-kit
+
 A lightweight and flexible authentication state manager for React applications.  
 Supports both **JavaScript** and **TypeScript** projects.
 
-`auth-kit` helps you manage user state, login, logout, and token persistence without forcing a specific backend implementation. You can plug in your own API functions easily.
+`auth-kit` helps you manage user state, login, logout, and token persistence without forcing any specific backend.  
+You plug in your own API functions.
 
 ---
 
 ## 🚀 Features
 
-- 🧩 Simple and reusable `AuthProvider`
-- 🔒 Manages `user`, `token`, and persistent auth state
-- 🎯 Works with any backend (Express, Nest, Laravel, etc.)
-- 💡 Built with TypeScript but fully compatible with JavaScript
-- 🧠 Provides `useAuth()` hook for easy access
-- 📦 Lightweight and fast (powered by `tsup`)
-- ✔ Supports both **ESM** and **CommonJS**
+- Simple and reusable `AuthProvider`
+- Handles `user`, `token`, and persistent auth state
+- Works with any backend
+- Built with TypeScript but fully compatible with JavaScript
+- Provides `useAuth()` hook
+- Lightweight and fast
+- Supports both **ESM** and **CommonJS**
 
 ---
 
@@ -27,7 +28,7 @@ Supports both **JavaScript** and **TypeScript** projects.
 npm install auth-kit
 ````
 
-Or using Yarn:
+or
 
 ```bash
 yarn add auth-kit
@@ -37,10 +38,9 @@ yarn add auth-kit
 
 ## 🛠 Usage
 
-`auth-kit` does NOT force you to use a specific API.
-You simply pass your own login & logout functions.
+`auth-kit` requires your own login and logout API functions.
 
-### **Example (Using Axios)**
+### **Example**
 
 ```tsx
 // App.jsx / App.tsx
@@ -91,7 +91,6 @@ function Dashboard() {
   return (
     <div>
       <h2>Welcome {user?.name}</h2>
-
       <button onClick={() => logout()}>Logout</button>
     </div>
   );
@@ -104,40 +103,21 @@ function Dashboard() {
 
 | Option      | Type                                            | Required | Description                 |
 | ----------- | ----------------------------------------------- | -------- | --------------------------- |
-| `loginApi`  | `(email, password) => Promise<{ user, token }>` | Yes      | Your login request handler  |
-| `logoutApi` | `() => Promise<void>`                           | No       | Optional logout API handler |
+| `loginApi`  | `(email, password) => Promise<{ user, token }>` | Yes      | Your login request function |
+| `logoutApi` | `() => Promise<void>`                           | No       | Optional logout function    |
 
 ---
 
-## 🧩 What `auth-kit` Stores
+## 🧩 What auth-kit Stores
 
-* `user` → saved in `localStorage` (`authkit-user`)
-* `token` → saved in browser cookies as `accessToken`
-
-This ensures:
-
-* persistent login
-* easy token sending through cookies
-* predictable user state after refresh
+* `user` → saved in `localStorage` as `authkit-user`
+* `token` → stored in browser cookies as `accessToken`
 
 ---
 
-## 🧪 Example Directory Structure
+## 🏗 TypeScript Support
 
-```
-src/
- ├── App.jsx
- ├── api/
- │    └── axios.js
- └── pages/
-      └── Dashboard.jsx
-```
-
----
-
-## 🏗 For TypeScript Users
-
-Full type support is included:
+Full TypeScript definitions included:
 
 ```ts
 import { AuthProvider, useAuth, type AuthKitConfig } from "auth-kit";
@@ -147,20 +127,15 @@ import { AuthProvider, useAuth, type AuthKitConfig } from "auth-kit";
 
 ## 📤 Contributing
 
-Pull requests are welcome!
-If you want to contribute, please open an issue first to discuss what you want to change.
+Pull requests are welcome.
+Please open an issue first to discuss any changes.
 
 ---
 
 ## 📄 License
 
 MIT License © 2025
-Developed with ❤️ by Meheraj Hosen
-
----
-
-## ⭐ If you like this package
-
-Please ⭐ the repository on GitHub to support the project!
+Developed by Meheraj Hosen
 
 ```
+

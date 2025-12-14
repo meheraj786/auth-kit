@@ -1,31 +1,40 @@
 {
   "name": "react-express-auth-kit",
-  "version": "1.1.2",
-  "main": "index.js",
+  "version": "1.1.3",
+
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+
+  "files": ["dist"],
+
   "scripts": {
     "build": "tsup src/index.ts --dts --format esm,cjs --sourcemap"
   },
+
   "peerDependencies": {
-    "react": "^18.0.0"
+    "react": "^18.0.0 || ^19.0.0"
   },
+
   "keywords": [
+    "react",
     "auth",
+    "authentication",
     "login",
     "logout",
-    "react",
     "express",
-    "react-express-auth-kit"
+    "jwt"
   ],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "react": "^19.2.3"
-  },
-  "devDependencies": {
-    "@types/react": "^19.2.7",
-    "tsup": "^8.5.1",
-    "typescript": "^5.9.3",
-    "vite": "^7.2.7"
-  }
+
+  "author": "Meheraj Hosen",
+  "license": "MIT",
+  "description": "Lightweight authentication state manager for React + Express"
 }

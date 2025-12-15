@@ -11,16 +11,16 @@ Built with **TypeScript**, but fully compatible with **JavaScript** projects.
 
 ## 🚀 Features
 
-* Simple and reusable `AuthProvider`
-* Manages authentication state (`user`, `loading`)
-* Built-in `login` & `logout` helpers
-* Works with **any backend (Express, Nest, etc.)**
-* Persistent auth state using `localStorage`
-* Token handling via cookies
-* Fully typed with TypeScript
-* JavaScript friendly
-* Lightweight and dependency-free
-* Supports **ESM** and **CommonJS**
+- Simple and reusable `AuthProvider`
+- Manages authentication state (`user`, `loading`)
+- Built-in `login` & `logout` helpers
+- Works with **any backend (Express, Nest, etc.)**
+- Persistent auth state using `localStorage`
+- Token handling via cookies
+- Fully typed with TypeScript
+- JavaScript friendly
+- Lightweight and dependency-free
+- Supports **ESM** and **CommonJS**
 
 ---
 
@@ -61,8 +61,8 @@ export default function Root() {
 
 By default, `react-express-auth-kit` uses:
 
-* **Login** → `/auth/login`
-* **Logout** → `/auth/logout`
+- **Login** → `/auth/login`
+- **Logout** → `/auth/logout`
 
 You can customize them if needed:
 
@@ -76,6 +76,44 @@ You can customize them if needed:
   <App />
 </AuthProvider>
 ```
+
+### More config patterns
+
+Custom logout function (useful when you need to send credentials, additional headers, or call multiple endpoints):
+
+```tsx
+<AuthProvider
+  config={{
+    logoutApi: async () => {
+      await fetch("https://api.example.com/auth/logout", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+    },
+  }}
+>
+  <App />
+</AuthProvider>
+```
+
+Environment-driven config (recommended for different environments):
+
+```tsx
+const authConfig = {
+  loginRoute: process.env.REACT_APP_AUTH_LOGIN,
+  logoutRoute: process.env.REACT_APP_AUTH_LOGOUT,
+};
+
+<AuthProvider config={authConfig}>
+  <App />
+</AuthProvider>;
+```
+
+Cookies and credentials notes
+
+- If your backend sets session cookies or uses cookie-based auth, make sure to pass `credentials: "include"` on fetch and configure CORS to allow credentials on cross-origin requests.
+- Ensure `Access-Control-Allow-Credentials: true` is set on the server and the cookie has proper `SameSite` and `Secure` attributes.
 
 ---
 
@@ -119,8 +157,8 @@ Your backend **must return** the following structure:
 
 📌 On successful login:
 
-* `user` → stored in `localStorage` (`authkit-user`)
-* `token` → stored in cookies (`accessToken`)
+- `user` → stored in `localStorage` (`authkit-user`)
+- `token` → stored in cookies (`accessToken`)
 
 ---
 
@@ -154,10 +192,10 @@ logout();
 
 What happens on logout:
 
-* Clears `user` state
-* Removes `authkit-user` from `localStorage`
-* Removes `accessToken` cookie
-* Optionally calls backend logout API
+- Clears `user` state
+- Removes `authkit-user` from `localStorage`
+- Removes `accessToken` cookie
+- Optionally calls backend logout API
 
 ---
 
@@ -202,10 +240,10 @@ import {
 
 ## 🧠 What This Package Does NOT Do
 
-* ❌ Token refresh
-* ❌ Role/permission handling
-* ❌ Backend authentication logic
-* ❌ OAuth / Social login
+- ❌ Token refresh
+- ❌ Role/permission handling
+- ❌ Backend authentication logic
+- ❌ OAuth / Social login
 
 > These are intentionally left to keep the package lightweight.
 

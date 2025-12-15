@@ -6,14 +6,12 @@ import React, {
   ReactNode,
 } from "react";
 
-// Config interface
 export interface AuthKitConfig {
-  loginRoute?: string; // internal login route, default "/auth/login"
-  logoutRoute?: string; // internal logout route, default "/auth/logout"
-  logoutApi?: () => Promise<void>; // optional custom logout
+  loginRoute?: string; 
+  logoutRoute?: string; 
+  logoutApi?: () => Promise<void>; 
 }
 
-// Context type
 interface AuthContextType {
   user: any;
   loading: boolean;
@@ -21,10 +19,8 @@ interface AuthContextType {
   logout: () => Promise<void>;
 }
 
-// Create context
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// AuthProvider component
 export const AuthProvider = ({
   children,
   config,
@@ -35,7 +31,6 @@ export const AuthProvider = ({
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user from localStorage on mount
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem("authkit-user");
@@ -48,7 +43,6 @@ export const AuthProvider = ({
     }
   }, []);
 
-  // Login function (internal fetch)
   const login = async (email: string, password: string) => {
     const route = config?.loginRoute || "/auth/login";
 
@@ -62,7 +56,6 @@ export const AuthProvider = ({
 
     const data: { user: any; token: string } = await res.json();
 
-    // Save user & token
     setUser(data.user);
     localStorage.setItem("authkit-user", JSON.stringify(data.user));
     document.cookie = `accessToken=${data.token}; path=/; SameSite=Lax`;
@@ -70,7 +63,7 @@ export const AuthProvider = ({
     return data.user;
   };
 
-  // Logout function
+
   const logout = async () => {
     if (config?.logoutApi) {
       try {
@@ -95,7 +88,6 @@ export const AuthProvider = ({
   );
 };
 
-// useAuth hook
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used inside AuthProvider");

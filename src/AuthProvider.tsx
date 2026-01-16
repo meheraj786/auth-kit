@@ -56,11 +56,11 @@ export const AuthProvider = ({
 
     const data: { user: any; token: string } = await res.json();
 
-    setUser(data.user);
-    localStorage.setItem("authkit-user", JSON.stringify(data.user));
+    setUser(data);
+    localStorage.setItem("authkit-user", JSON.stringify(data));
     document.cookie = `accessToken=${data.token}; path=/; SameSite=Lax`;
 
-    return data.user;
+    return data;
   };
 
 
